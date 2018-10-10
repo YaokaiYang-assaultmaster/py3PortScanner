@@ -8,7 +8,7 @@ Versions are monotonically increased based on Semantic Versioning.
 
 ### Backward incompatible changes:
 No longer compatible with python 2.7.
-For a version compatible with python 2.7, refer to v0.2.
+For a version compatible with python 2.7, refer to [v0.2](https://github.com/YaokaiYang-assaultmaster/PythonPortScanner).
 
 ### Deprecations
 None
