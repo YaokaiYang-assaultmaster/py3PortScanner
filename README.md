@@ -2,7 +2,7 @@
 
 An easy to use Python3 package that could perform port scanning conveniently.
 
-An output example is showed as following:
+An output example is showed as following:  
 ![Output Example](https://github.com/YaokaiYang-assaultmaster/py3PortScanner/blob/master/ExampleGraph/portscanner_output_new.png)
 
 ## Installation  
