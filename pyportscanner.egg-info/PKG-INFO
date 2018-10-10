@@ -1,0 +1,13 @@
+Metadata-Version: 1.0
+Name: pyportscanner
+Version: 0.3
+Summary: Port Scanner for Python
+Home-page: UNKNOWN
+Author: Jeff Yang
+Author-email: UNKNOWN
+License: UNKNOWN
+Description: pyportscanner is a port scanner tool wrote up in origin
+            python code.
+            It uses TCP handshake for probing open ports on a remote machine
+            specified by its hostname. 
+Platform: UNKNOWN
