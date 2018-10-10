@@ -1,9 +1,9 @@
-from pyportscanner import PortScanner
+from pyportscanner import pyscanner
 
 
 def main():
     # Initialize a Scanner object that will scan top 50 commonly used ports.
-    scanner = PortScanner.PortScanner(target_ports=100, verbose=True)
+    scanner = pyscanner.PortScanner(target_ports=100, verbose=True)
 
     host_name = 'google.com'
 

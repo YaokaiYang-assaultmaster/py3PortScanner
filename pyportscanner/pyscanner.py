@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-
+import concurrent.futures
 import platform
 import socket
-import threading
 import time
-
-import concurrent.futures
 
 from pyportscanner.etc.helper import read_input, get_domain
 
@@ -60,13 +56,13 @@ class PortScanner:
     def thread_limit(self):
         return self.__thread_limit
 
-    def __init__(self, target_ports=None, thread_limit=100, verbose=False):
+    def __init__(self, target_ports=None, thread_limit=100, timeout=10, verbose=False):
         """
         Constructor of a PortScanner object. If target_ports is a list, this list of ports will be used as
         the port list to be scanned. If the target_ports is a int, it should be 50, 100 or 1000, indicating
         which default list will be used.
 
-        :param target_ports: If this args is a list, then this list of ports that is going to be scanned,
+        :param target_ports: If this args is a list, then this list of ports is going to be scanned,
         default to all ports we have in file.
         If this args is an int, then it specifies the top X number of ports to be scanned based on usage
         frequency rank.
@@ -82,7 +78,7 @@ class PortScanner:
         self.__thread_limit = thread_limit
 
         # default connection timeout time in seconds
-        self.__timeout = 10
+        self.__timeout = timeout
 
         self.__verbose = verbose
 
@@ -131,33 +127,38 @@ class PortScanner:
         port_list = self.extract_list(k)
         return port_list
 
-    def scan(self, host_name, message=''):
+    def scan(self, objective, message=''):
         """
         This is the function need to be called to perform port scanning.
 
-        :param host_name: the hostname that is going to be scanned
+        :param objective: the objective that is going to be scanned. Could be a host name or an IPv4 address.
         :param message: the message that is going to be included in the scanning packets
         in order to prevent ethical problem (default: '').
         :return: a dict object containing the scan results for a given host in the form of
         {port_number: status}
         :rtype: dict
         """
-        host_name = get_domain(host_name)
+        try:
+            socket.inet_aton(objective)
+            host_name = objective
+        except OSError or socket.error:
+            # this is not an valid IPv4 address
+            host_name = get_domain(objective)
 
         if self.__verbose:
             print('\n')
             print('*' * 60 + '\n')
-            print('Start scanning website: {}'.format(host_name))
+            print('Start scanning target: {}'.format(host_name))
 
         try:
             server_ip = socket.gethostbyname(host_name)
             if self.__verbose:
-                print('Server ip is: {}'.format(str(server_ip)))
+                print('Target IP is: {}'.format(str(server_ip)))
 
         except socket.error:
-            # If the DNS resolution of a website cannot be finished, abort that website.
+            # If the DNS resolution of a website cannot be finished, abort the host.
             if self.__verbose:
-                print('Hostname {} unknown! Scan failed'.format(host_name))
+                print('Target {} unknown! Scan failed.'.format(host_name))
                 self.__usage()
             return {}
 
@@ -166,7 +167,7 @@ class PortScanner:
         stop_time = time.time()
 
         if self.__verbose:
-            print('Host {} scanned in  {} seconds'.format(host_name, stop_time - start_time))
+            print('Target {} scanned in  {} seconds'.format(host_name, stop_time - start_time))
             print('Scan completed!\n')
 
         return output
@@ -197,6 +198,11 @@ class PortScanner:
                 while len(futures) >= self.__thread_limit:
                     self.__check_futures(output, futures)
                     time.sleep(0.01)
+
+            # make sure all thread outputs are stored.
+            while futures:
+                self.__check_futures(output, futures)
+                time.sleep(0.01)
 
         # Print opening ports from small to large
         if self.__verbose:
