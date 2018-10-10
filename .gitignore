@@ -2,3 +2,10 @@
 build
 *.pyc
 .idea
+dist
+MANIFEST
+tests/*.out
+*.pyc
+.coverage
+.tox
+.eggs/
