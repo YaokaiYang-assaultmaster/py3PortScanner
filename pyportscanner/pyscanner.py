@@ -2,6 +2,7 @@ import concurrent.futures
 import platform
 import socket
 import time
+from collections import deque
 
 from pyportscanner.etc.helper import read_input, get_domain
 
@@ -190,7 +191,7 @@ class PortScanner:
         for port in self.targets:
             output[port] = 'CLOSE'
         
-        futures = list()
+        futures = deque()
         with concurrent.futures.ThreadPoolExecutor(max_workers=self.__thread_limit) as executor:
             for port in self.targets:
                 future = executor.submit(self.__TCP_connect, ip, port, message)
@@ -224,14 +225,16 @@ class PortScanner:
         :param output: dict for storing the results
         :param futures: list of concurrent.futures.Future object
         """
-        for future in futures:
+        for _ in range(len(futures)):
+            future = deque.popleft()
             if future.done():
                 try:
                     port, status = future.result()
                     output[port] = status
                 except Exception:
                     pass
-                futures.remove(future)
+            else:
+                futures.append(future)
 
     def __TCP_connect(self, ip, port_number, message):
         """
