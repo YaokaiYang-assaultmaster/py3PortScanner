@@ -226,7 +226,7 @@ class PortScanner:
         :param futures: list of concurrent.futures.Future object
         """
         for _ in range(len(futures)):
-            future = deque.popleft()
+            future = futures.popleft()
             if future.done():
                 try:
                     port, status = future.result()
