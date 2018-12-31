@@ -39,4 +39,12 @@ Scan an objective with the given message included in the packets sent out.
 
 An example usage case is showed in [_examples/PortScanExample.py_](https://github.com/YaokaiYang-assaultmaster/py3PortScanner/blob/master/examples/PortScanExample.py).  
 
+### Unit Test
+
+In order to run unit test, execute the following command under the root directory.
+
+```Python
+pytest --cov pyportscanner/ tests/
+``` 
+
 ## [Change logs](https://github.com/YaokaiYang-assaultmaster/py3PortScanner/blob/master/CHANGELOG.md)

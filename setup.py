@@ -1,20 +1,34 @@
-from setuptools import setup
+import os
 
+from setuptools import setup, find_packages
 
-kwargs = {
-    'author': 'Jeff Yang',
-    'name': 'pyportscanner',
-    'version': '0.3',
-    'description': 'Port Scanner for Python',
-    'long_description': \
-    """pyportscanner is a port scanner tool wrote up in origin
-    python code.
-    It uses TCP handshake for probing open ports on a remote machine
-    specified by its hostname. """,
-    'packages': ['pyportscanner', 'pyportscanner.etc'],
-    'package_data': {'pyportscanner': ['etc/*.dat']},
-}
+here = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(here, 'README.md')) as f:
+    README = f.read()
+with open(os.path.join(here, 'CHANGELOG.md')) as f:
+    CHANGES = f.read()
+
+dev_requires = [
+    'pytest',
+    'pytest-cov',
+]
+
 
 setup(
-    **kwargs,
+    author='Jeff Yang',
+    name='pyportscanner',
+    version='0.3',
+    description='Port Scanner for Python3+',
+    long_description=README + '\n\n' + CHANGES,
+    classifiers=[
+      "Programming Language :: Python",
+    ],
+    url='https://github.com/YaokaiYang-assaultmaster/py3PortScanner',
+    packages=find_packages(),
+    package_data={'pyportscanner': ['etc/*.dat']},
+    include_package_data=True,
+    zip_safe=False,
+    extras_require={
+      'dev': dev_requires,
+    },
 )

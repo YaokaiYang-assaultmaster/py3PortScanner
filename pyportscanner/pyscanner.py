@@ -3,6 +3,7 @@ import platform
 import socket
 import time
 from collections import deque
+from socket import error as socket_error
 
 from pyportscanner.etc.helper import read_input, get_domain
 
@@ -142,7 +143,7 @@ class PortScanner:
         try:
             socket.inet_aton(objective)
             host_name = objective
-        except OSError or socket.error:
+        except OSError or socket_error:
             # this is not an valid IPv4 address
             host_name = get_domain(objective)
 
@@ -156,7 +157,7 @@ class PortScanner:
             if self.__verbose:
                 print('Target IP is: {}'.format(str(server_ip)))
 
-        except socket.error:
+        except Exception:
             # If the DNS resolution of a website cannot be finished, abort the host.
             if self.__verbose:
                 print('Target {} unknown! Scan failed.'.format(host_name))
@@ -231,7 +232,7 @@ class PortScanner:
                 try:
                     port, status = future.result()
                     output[port] = status
-                except Exception:
+                except socket_error:
                     pass
             else:
                 futures.append(future)
@@ -261,23 +262,28 @@ class PortScanner:
             TCP_sock.settimeout(self.__timeout)
 
         b_message = message.encode('utf-8', errors='replace')
-        # Initialize a UDP socket to send scanning alert message if there exists an non-empty message
-        if message:
-            UDP_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            UDP_sock.sendto(b_message, (ip, int(port_number)))
 
+        # Initialize a UDP socket to send scanning alert message if there exists an non-empty message
+        UDP_sock = None
         try:
+            if message:
+                UDP_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                UDP_sock.sendto(b_message, (ip, int(port_number)))
+
             result = TCP_sock.connect_ex((ip, int(port_number)))
-            if message != '':
+            if message and result == 0:
                 TCP_sock.sendall(b_message)
 
-            TCP_sock.close()
             # If the TCP handshake is successful, the port is OPEN. Otherwise it is CLOSE
             if result == 0:
                 return port_number, 'OPEN'
             else:
                 return port_number, 'CLOSE'
 
-        except socket.error as e:
+        except socket_error as e:
             # Failed to perform a TCP handshake means the port is probably close.
             return port_number, 'CLOSE'
+        finally:
+            if UDP_sock:
+                UDP_sock.close()
+            TCP_sock.close()
