@@ -6,6 +6,12 @@ An output example is showed as following:
 ![Output Example](https://github.com/YaokaiYang-assaultmaster/py3PortScanner/blob/master/ExampleGraph/portscanner_output_new.png)
 
 ## Installation  
+### Install with pip  
+```
+pip install pyportscanner
+```
+
+### Install with setup scripts  
 1. Clone or download this repository.
 2. Install the package using `python setup.py install`.   
 3. Voilà! You are ready to go!

@@ -19,7 +19,8 @@ setup(
     name='pyportscanner',
     version='0.3',
     description='Port Scanner for Python3+',
-    long_description=README + '\n\n' + CHANGES,
+    long_description=README,
+    long_description_content_type='text/markdown',
     classifiers=[
       "Programming Language :: Python",
     ],
