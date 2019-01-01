@@ -1,5 +1,7 @@
 # Python Port Scanner v0.3
 
+[![Build Status](https://travis-ci.com/YaokaiYang-assaultmaster/py3PortScanner.svg?branch=master)](https://travis-ci.com/YaokaiYang-assaultmaster/py3PortScanner)
+
 An easy to use Python3 package that could perform port scanning conveniently.
 
 An output example is showed as following:  
